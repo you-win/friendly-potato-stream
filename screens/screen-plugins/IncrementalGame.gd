@@ -80,6 +80,7 @@ func _input(event: InputEvent) -> void:
 func _on_chat_message_received(_message: String) -> void:
 	_score.plus(1)
 	_score_label.text = _score.to_string()
+	# TODO Don't write data every time
 	_write_data()
 
 ###############################################################################
