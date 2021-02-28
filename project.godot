@@ -1,0 +1,107 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+_global_script_classes=[ {
+"base": "Node",
+"class": "BaseChat",
+"language": "GDScript",
+"path": "res://utils/chat-integrations/BaseChat.gd"
+}, {
+"base": "Reference",
+"class": "Big",
+"language": "GDScript",
+"path": "res://addons/GodotBigNumberClass/Big.gd"
+}, {
+"base": "Node2D",
+"class": "MainScreen",
+"language": "GDScript",
+"path": "res://screens/MainScreen.gd"
+}, {
+"base": "Control",
+"class": "ScreenPlugin",
+"language": "GDScript",
+"path": "res://screens/screen-plugins/ScreenPlugin.gd"
+}, {
+"base": "Node",
+"class": "TwitchChat",
+"language": "GDScript",
+"path": "res://utils/chat-integrations/TwitchChat.gd"
+}, {
+"base": "Reference",
+"class": "YoutubeChat",
+"language": "GDScript",
+"path": "res://utils/chat-integrations/YoutubeChat.gd"
+} ]
+_global_script_class_icons={
+"BaseChat": "",
+"Big": "",
+"MainScreen": "",
+"ScreenPlugin": "",
+"TwitchChat": "",
+"YoutubeChat": ""
+}
+
+[application]
+
+config/name="Friendly Potato Stream"
+run/main_scene="res://screens/MainScreen.tscn"
+config/icon="res://assets/potato-icon.png"
+config/windows_native_icon="res://assets/potato-icon.ico"
+
+[autoload]
+
+AppManager="*res://utils/AppManager.gd"
+
+[display]
+
+window/size/width=1600
+window/size/height=900
+window/per_pixel_transparency/allowed=true
+window/per_pixel_transparency/enabled=true
+
+[input]
+
+toggle_ui={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777218,"unicode":0,"echo":false,"script":null)
+ ]
+}
+left_click={
+"deadzone": 0.5,
+"events": [ Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"button_mask":0,"position":Vector2( 0, 0 ),"global_position":Vector2( 0, 0 ),"factor":1.0,"button_index":1,"pressed":false,"doubleclick":false,"script":null)
+ ]
+}
+right_click={
+"deadzone": 0.5,
+"events": [ Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"button_mask":0,"position":Vector2( 0, 0 ),"global_position":Vector2( 0, 0 ),"factor":1.0,"button_index":2,"pressed":false,"doubleclick":false,"script":null)
+ ]
+}
+scroll_up={
+"deadzone": 0.5,
+"events": [ Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"button_mask":0,"position":Vector2( 0, 0 ),"global_position":Vector2( 0, 0 ),"factor":1.0,"button_index":4,"pressed":false,"doubleclick":false,"script":null)
+ ]
+}
+scroll_down={
+"deadzone": 0.5,
+"events": [ Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"button_mask":0,"position":Vector2( 0, 0 ),"global_position":Vector2( 0, 0 ),"factor":1.0,"button_index":5,"pressed":false,"doubleclick":false,"script":null)
+ ]
+}
+
+[logging]
+
+file_logging/enable_file_logging=true
+
+[rendering]
+
+quality/driver/driver_name="GLES2"
+vram_compression/import_etc=true
+vram_compression/import_etc2=false
+environment/default_clear_color=Color( 0.301961, 0.301961, 0.301961, 0 )
+environment/default_environment="res://assets/default_env.tres"
