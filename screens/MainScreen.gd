@@ -5,8 +5,6 @@ enum StreamingServiceType { TWITCH, YOUTUBE }
 export(StreamingServiceType) var streaming_service = StreamingServiceType.TWITCH
 
 const CONFIG_FILE_NAME: String = "potato-config.json"
-const CONFIG_FILE_USERNAME_KEY: String = "username"
-const CONFIG_FILE_TOKEN_KEY: String = "token"
 
 # Options for which screens to load
 export var simple_chat: bool = false
@@ -81,18 +79,24 @@ func _load_twitch_chat_base() -> void:
 	service = TwitchChat.new()
 	
 	service.name = "TwitchChat"
-	add_child(service)
+#	add_child(service)
+	call_deferred("add_child", service)
 	
-	yield(service.websocket_client, "connection_established")
+	yield(service, "ready")
 	
-	service.authenticate(config[CONFIG_FILE_USERNAME_KEY], config[CONFIG_FILE_TOKEN_KEY])
-	
+	# Chat
+	yield(service.chat_client, "connection_established")
+	service.authenticate(config["username"], config["token"])
 	yield(service, "authenticated")
-	
-	service.join_channel(config[CONFIG_FILE_USERNAME_KEY])
-	
-	# service.connect("chat_message_received", self, "_on_chat_message_received")
+	service.join_channel(config["join_channel"])
 	AppManager.console_log("Twitch chat loaded")
+	
+	# PubSub
+	# yield(service.pubsub_client, "connection_established") # NOTE not needed since both clients connect at the same time?
+	service.pubsub_client.get_peer(1).set_write_mode(WebSocketPeer.WRITE_MODE_TEXT) # WTF it starts in the wrong write mode
+	service.subscribe(config["channel_id"], config["token"], config["nonce"])
+	yield(service, "pub_sub_connected")
+	AppManager.console_log("Twitch PubSub loaded")
 
 func _load_youtube_chat_base() -> void:
 	printerr("Not yet implemented")
