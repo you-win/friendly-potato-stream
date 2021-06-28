@@ -1,4 +1,4 @@
-class_name TwitchChat
+class_name TwitchIntegration
 extends Node
 
 """
@@ -14,6 +14,8 @@ signal pub_sub_connected
 
 signal chat_message_received(message)
 
+signal user_subscribed(user, months)
+signal bits_received(user, amount, message)
 signal channel_points_redeemed(user, reward, message)
 
 # General API
@@ -35,9 +37,6 @@ const PING_TIME: float = 360.0 # In seconds
 const POLL_TIME: float = 1.0
 
 # IRC-specific data
-const AUTHENTICATED_CHAT_IDENTIFER: String = "001"
-const STANDARD_CHAT_IDENTIFIER: String = "PRIVMSG"
-const PING_CHAT_IDENTIFIER: String = "PING"
 const PONG_CHAT_MESSAGE: String = "PONG :tmi.twitch.tv"
 
 const CHAT_HISTORY_LENGTH: int = 100
@@ -157,14 +156,17 @@ func _on_chat_data_received() -> void:
 	# :tmi.twitch.tv <num/IRC type> <user/channel> :<message>
 	var split_message: PoolStringArray = message.split(" ", true, 3)
 
-	if split_message[0] == PING_CHAT_IDENTIFIER:
+	if split_message[0] == "PING":
 		_send_chat_websocket_message(PONG_CHAT_MESSAGE)
 	else:
 		match split_message[1]:
-			AUTHENTICATED_CHAT_IDENTIFER:
+			"001":
 				emit_signal("authenticated")
-			STANDARD_CHAT_IDENTIFIER:
+			"PRIVMSG":
 				_add_message_to_chat_history(split_message[3])
+			"366", "JOIN":
+				# Do nothing
+				pass
 			_:
 				AppManager.console_log("Unhandled message type received: %s" % message)
 
@@ -211,11 +213,20 @@ func _on_pubsub_data_received() -> void:
 			
 			var ps_topic: String = json_message["data"]["topic"]
 			var ps_message = parse_json(json_message["data"]["message"])
-			
+				
 			if "subscribe" in ps_topic:
-				pass
+				var user_name: String = "anon"
+				# NOTE Not a complete null check but I blame Twitch for any other nulls
+				# NOTE twitch sends a display name but use the user_name for consistency
+				if ps_message.has("user_name"):
+					user_name = ps_message["user_name"]
+				emit_signal("user_subscribed", user_name, ps_message["cumulative_months"])
 			elif "bits" in ps_topic:
-				pass
+				var user_name: String = "anon"
+				# NOTE Not a complete null check but I blame Twitch for any other nulls
+				if (not ps_message["is_anonymous"] and ps_message.has("user_name")):
+					user_name = ps_message["user_name"]
+				emit_signal("bits_received", user_name, ps_message["bits_used"], ps_message["chat_message"])
 			elif "channel-points" in ps_topic:
 				# NOTE Not a complete null check but I blame Twitch for any other nulls
 				if (not ps_message.has("data") or not ps_message["data"].has("redemption")):
@@ -375,5 +386,4 @@ func subscribe(channel_id: String, token: String, p_nonce: String) -> void:
 		}
 	}
 	
-	print(JSON.print(request))
 	_send_pubsub_websocket_message(JSON.print(request))

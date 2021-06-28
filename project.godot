@@ -9,55 +9,49 @@
 config_version=4
 
 _global_script_classes=[ {
-"base": "Node",
+"base": "Reference",
 "class": "BaseChat",
 "language": "GDScript",
-"path": "res://utils/chat-integrations/BaseChat.gd"
+"path": "res://utils/service-integrations/base_chat.gd"
 }, {
 "base": "Reference",
 "class": "Big",
 "language": "GDScript",
 "path": "res://addons/GodotBigNumberClass/Big.gd"
 }, {
-"base": "Node2D",
-"class": "MainScreen",
-"language": "GDScript",
-"path": "res://screens/MainScreen.gd"
-}, {
 "base": "Control",
 "class": "ScreenPlugin",
 "language": "GDScript",
-"path": "res://screens/screen-plugins/ScreenPlugin.gd"
+"path": "res://screens/screen-plugins/screen_plugin.gd"
 }, {
 "base": "Node",
-"class": "TwitchChat",
+"class": "TwitchIntegration",
 "language": "GDScript",
-"path": "res://utils/chat-integrations/TwitchChat.gd"
+"path": "res://utils/service-integrations/twitch_integration.gd"
 }, {
 "base": "Reference",
-"class": "YoutubeChat",
+"class": "YoutubeIntegration",
 "language": "GDScript",
-"path": "res://utils/chat-integrations/YoutubeChat.gd"
+"path": "res://utils/service-integrations/youtube_integration.gd"
 } ]
 _global_script_class_icons={
 "BaseChat": "",
 "Big": "",
-"MainScreen": "",
 "ScreenPlugin": "",
-"TwitchChat": "",
-"YoutubeChat": ""
+"TwitchIntegration": "",
+"YoutubeIntegration": ""
 }
 
 [application]
 
 config/name="Friendly Potato Stream"
-run/main_scene="res://screens/MainScreen.tscn"
+run/main_scene="res://screens/main_screen.tscn"
 config/icon="res://assets/potato-icon.png"
 config/windows_native_icon="res://assets/potato-icon.ico"
 
 [autoload]
 
-AppManager="*res://utils/AppManager.gd"
+AppManager="*res://utils/app_manager.gd"
 
 [display]
 
@@ -65,6 +59,29 @@ window/size/width=1600
 window/size/height=900
 window/per_pixel_transparency/allowed=true
 window/per_pixel_transparency/enabled=true
+
+[importer_defaults]
+
+texture={
+"compress/bptc_ldr": 0,
+"compress/hdr_mode": 0,
+"compress/lossy_quality": 0.7,
+"compress/mode": 0,
+"compress/normal_map": 0,
+"detect_3d": false,
+"flags/anisotropic": false,
+"flags/filter": false,
+"flags/mipmaps": false,
+"flags/repeat": 0,
+"flags/srgb": 2,
+"process/HDR_as_SRGB": false,
+"process/fix_alpha_border": true,
+"process/invert_color": false,
+"process/premult_alpha": false,
+"size_limit": 0,
+"stream": false,
+"svg/scale": 1.0
+}
 
 [input]
 

@@ -1,4 +1,3 @@
-class_name MainScreen
 extends Node2D
 
 enum StreamingServiceType { TWITCH, YOUTUBE }
@@ -10,6 +9,7 @@ const CONFIG_FILE_NAME: String = "potato-config.json"
 export var simple_chat: bool = false
 export var h_scroll_text: bool = true
 export var incremental_game: bool = true
+export var stream_rpg: bool = true
 
 onready var screen_scale_layer: CanvasLayer = $ScreenScaleLayer
 
@@ -36,13 +36,16 @@ func _ready() -> void:
 	# TODO refactor this into something more modular
 	# Load plugins
 	if simple_chat:
-		var instance = load("res://screens/screen-plugins/SimpleChat.tscn").instance()
+		var instance = load("res://screens/screen-plugins/simple_chat.tscn").instance()
 		screen_scale_layer.add_child(instance)
 	if h_scroll_text:
-		var instance = load("res://screens/screen-plugins/HScrollText.tscn").instance()
+		var instance = load("res://screens/screen-plugins/h_scroll_text.tscn").instance()
 		screen_scale_layer.add_child(instance)
 	if incremental_game:
-		var instance = load("res://screens/screen-plugins/IncrementalGame.tscn").instance()
+		var instance = load("res://screens/screen-plugins/incremental_game.tscn").instance()
+		screen_scale_layer.add_child(instance)
+	if stream_rpg:
+		var instance = load("res://screens/screen-plugins/stream-rpg/runner.tscn").instance()
 		screen_scale_layer.add_child(instance)
 	
 	for c in screen_scale_layer.get_children():
@@ -76,9 +79,9 @@ func _load_config() -> Dictionary:
 func _load_twitch_chat_base() -> void:
 	var config: Dictionary = _load_config()
 	
-	service = TwitchChat.new()
+	service = TwitchIntegration.new()
 	
-	service.name = "TwitchChat"
+	service.name = "Twitch"
 #	add_child(service)
 	call_deferred("add_child", service)
 	

@@ -12,7 +12,7 @@ onready var settings_button: Button = $Control/ButtonsContainer/HBoxContainer/Se
 onready var reset_button: Button = $Control/ButtonsContainer/HBoxContainer/ResetButton
 onready var console: VBoxContainer = $Control/ConsoleContainer/ColorRect/ScrollContainer/VBoxContainer
 
-onready var main_screen: MainScreen = get_parent()
+onready var main_screen = get_parent()
 onready var control: Control = $Control
 
 ###############################################################################

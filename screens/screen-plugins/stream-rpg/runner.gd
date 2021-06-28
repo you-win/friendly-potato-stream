@@ -1,42 +1,40 @@
 extends ScreenPlugin
 
-enum ScrollDirection { LEFT, RIGHT }
-export(ScrollDirection) var scroll_direction = ScrollDirection.LEFT
+const StreamRPG: Resource = preload("res://screens/screen-plugins/stream-rpg/stream_rpg.tscn")
 
-const CHAT_MESSAGE: Resource = preload("res://entities/chat-objects/PhysicsChatMessage.tscn")
+const VALID_COMMANDS: Array = [
+	"move",
+	"view stats",
+	"interact",
+	"attack",
+	"custom command"
+]
+
+onready var viewport: Viewport = $MarginContainer/ViewportContainer/Viewport
+
+var stream_rpg: Node2D
 
 ###############################################################################
 # Builtin functions                                                           #
 ###############################################################################
 
 func _ready() -> void:
-	pass
-
-func _physics_process(delta: float) -> void:
-	for c in get_children():
-		# Each child is a RigidBody2D
-		c.add_central_force(Vector2(-5.0, 0.0))
+	stream_rpg = StreamRPG.instance()
+	viewport.call_deferred("add_child", stream_rpg)
+	stream_rpg.setup({}) # TODO add some setup data?
 
 ###############################################################################
 # Connections                                                                 #
 ###############################################################################
 
-func _on_chat_message_received(message: String) -> void:
-	var chat_message: Node2D = CHAT_MESSAGE.instance()
-	
-	var random_amount: float = rand_range(-self.rect_size.y / 2, self.rect_size.y / 2)
-	var x_position: float
-	
-	match scroll_direction:
-		ScrollDirection.LEFT:
-			x_position = self.rect_size.x
-		scroll_direction.RIGHT:
-			x_position = 0.0
-	
-	chat_message.global_position = Vector2(x_position, self.rect_size.y / 2 + random_amount)
-	
-	add_child(chat_message)
-	chat_message.label.text = message
+func _on_command(user: String, reward: String, message: String) -> void:
+	# Filter out other rewards
+	var lowercase_reward: String = reward.to_lower()
+	if lowercase_reward in VALID_COMMANDS:
+		stream_rpg.command(user, lowercase_reward, message)
+
+func _on_chat(message: String) -> void:
+	pass
 
 ###############################################################################
 # Private functions                                                           #
@@ -47,10 +45,12 @@ func _on_chat_message_received(message: String) -> void:
 ###############################################################################
 
 func init_connections() -> void:
-	main_screen.service.connect("chat_message_received", self, "_on_chat_message_received")
+	main_screen.service.connect("channel_points_redeemed", self, "_on_command")
+	main_screen.service.connect("chat_message_received", self, "_on_chat")
 
 func cleanup_connections() -> void:
-	pass
+	main_screen.service.disconnect("channel_points_redeemed", self, "_on_command")
+	main_screen.service.disconnect("chat_message_received", self, "_on_chat")
 
 func initial_configs(_config: Dictionary) -> void:
 	pass
@@ -62,5 +62,10 @@ func set_config(_config: Dictionary) -> void:
 	pass
 
 func reset() -> void:
-	for c in get_children():
-		c.queue_free()
+	viewport.get_child(0).queue_free()
+	
+	stream_rpg = StreamRPG.instance()
+	viewport.call_deferred("add_child", stream_rpg)
+	
+	yield(stream_rpg, "ready")
+	stream_rpg.setup({}) # TODO add some setup data?

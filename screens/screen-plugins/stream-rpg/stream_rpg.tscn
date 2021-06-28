@@ -1,0 +1,142 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://screens/screen-plugins/stream-rpg/positions.gd" type="Script" id=1]
+[ext_resource path="res://screens/screen-plugins/stream-rpg/stream_rpg.gd" type="Script" id=2]
+[ext_resource path="res://screens/screen-plugins/stream-rpg/assets/Background.png" type="Texture" id=3]
+[ext_resource path="res://screens/screen-plugins/stream-rpg/stats_view.gd" type="Script" id=4]
+
+[node name="StreamRPG" type="Node2D"]
+script = ExtResource( 2 )
+
+[node name="Camera2D" type="Camera2D" parent="."]
+current = true
+
+[node name="Positions" type="Node" parent="."]
+script = ExtResource( 1 )
+
+[node name="Center" type="Position2D" parent="Positions"]
+position = Vector2( 0, 160 )
+
+[node name="Left" type="Position2D" parent="Positions"]
+position = Vector2( -400, 160 )
+
+[node name="OffLeft" type="Position2D" parent="Positions"]
+position = Vector2( -800, 160 )
+
+[node name="Right" type="Position2D" parent="Positions"]
+position = Vector2( 400, 160 )
+
+[node name="OffRight" type="Position2D" parent="Positions"]
+position = Vector2( 800, 160 )
+
+[node name="Tween" type="Tween" parent="Positions"]
+
+[node name="Background" type="Sprite" parent="."]
+scale = Vector2( 2, 2 )
+texture = ExtResource( 3 )
+
+[node name="Entities" type="Node" parent="."]
+
+[node name="TickTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="StatsViewport" type="ViewportContainer" parent="CanvasLayer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+stretch = true
+stretch_shrink = 5
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Viewport" type="Viewport" parent="CanvasLayer/StatsViewport"]
+size = Vector2( 320, 180 )
+handle_input_locally = false
+render_target_update_mode = 0
+
+[node name="StatsView" type="MarginContainer" parent="CanvasLayer/StatsViewport/Viewport"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/StatsViewport/Viewport/StatsView"]
+margin_right = 320.0
+margin_bottom = 180.0
+color = Color( 0, 0, 0, 0.662745 )
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/StatsViewport/Viewport/StatsView"]
+margin_right = 320.0
+margin_bottom = 180.0
+custom_constants/margin_right = 10
+custom_constants/margin_top = 10
+custom_constants/margin_left = 10
+custom_constants/margin_bottom = 10
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/StatsViewport/Viewport/StatsView/MarginContainer"]
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 310.0
+margin_bottom = 170.0
+
+[node name="Left" type="VBoxContainer" parent="CanvasLayer/StatsViewport/Viewport/StatsView/MarginContainer/HBoxContainer"]
+margin_right = 148.0
+margin_bottom = 160.0
+size_flags_horizontal = 3
+
+[node name="Name" type="Label" parent="CanvasLayer/StatsViewport/Viewport/StatsView/MarginContainer/HBoxContainer/Left"]
+margin_right = 148.0
+margin_bottom = 50.0
+size_flags_vertical = 3
+text = "Name: "
+valign = 1
+
+[node name="Strength" type="Label" parent="CanvasLayer/StatsViewport/Viewport/StatsView/MarginContainer/HBoxContainer/Left"]
+margin_top = 54.0
+margin_right = 148.0
+margin_bottom = 105.0
+size_flags_vertical = 3
+text = "Strength: "
+valign = 1
+
+[node name="Agility" type="Label" parent="CanvasLayer/StatsViewport/Viewport/StatsView/MarginContainer/HBoxContainer/Left"]
+margin_top = 109.0
+margin_right = 148.0
+margin_bottom = 160.0
+size_flags_vertical = 3
+text = "Agility: "
+valign = 1
+
+[node name="Right" type="VBoxContainer" parent="CanvasLayer/StatsViewport/Viewport/StatsView/MarginContainer/HBoxContainer"]
+margin_left = 152.0
+margin_right = 300.0
+margin_bottom = 160.0
+size_flags_horizontal = 3
+
+[node name="Experience" type="Label" parent="CanvasLayer/StatsViewport/Viewport/StatsView/MarginContainer/HBoxContainer/Right"]
+margin_right = 148.0
+margin_bottom = 50.0
+size_flags_vertical = 3
+text = "Experience: "
+valign = 1
+
+[node name="Intelligence" type="Label" parent="CanvasLayer/StatsViewport/Viewport/StatsView/MarginContainer/HBoxContainer/Right"]
+margin_top = 54.0
+margin_right = 148.0
+margin_bottom = 105.0
+size_flags_vertical = 3
+text = "Intelligence:"
+valign = 1
+
+[node name="Charisma" type="Label" parent="CanvasLayer/StatsViewport/Viewport/StatsView/MarginContainer/HBoxContainer/Right"]
+margin_top = 109.0
+margin_right = 148.0
+margin_bottom = 160.0
+size_flags_vertical = 3
+text = "Charisma:"
+valign = 1
