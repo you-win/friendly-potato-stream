@@ -2,12 +2,15 @@ extends Node
 
 signal console_log(message)
 
+var rng: RandomNumberGenerator
+
 ###############################################################################
 # Builtin functions                                                           #
 ###############################################################################
 
 func _ready() -> void:
-	pass
+	rng =  RandomNumberGenerator.new()
+	rng.randomize()
 
 ###############################################################################
 # Connections                                                                 #

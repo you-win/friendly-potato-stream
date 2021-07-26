@@ -9,7 +9,8 @@ const CONFIG_FILE_NAME: String = "potato-config.json"
 export var simple_chat: bool = false
 export var h_scroll_text: bool = true
 export var incremental_game: bool = true
-export var stream_rpg: bool = true
+export var stream_rpg: bool = false
+export var chat_minions: bool = true
 
 onready var screen_scale_layer: CanvasLayer = $ScreenScaleLayer
 
@@ -46,6 +47,9 @@ func _ready() -> void:
 		screen_scale_layer.add_child(instance)
 	if stream_rpg:
 		var instance = load("res://screens/screen-plugins/stream-rpg/runner.tscn").instance()
+		screen_scale_layer.add_child(instance)
+	if chat_minions:
+		var instance = load("res://screens/screen-plugins/chat-minions/runner.tscn").instance()
 		screen_scale_layer.add_child(instance)
 	
 	for c in screen_scale_layer.get_children():

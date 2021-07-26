@@ -1,40 +1,31 @@
 extends ScreenPlugin
 
-const StreamRPG: Resource = preload("res://screens/screen-plugins/stream-rpg/stream_rpg.tscn")
-
-const VALID_COMMANDS: Array = [
-	"move",
-	"view stats",
-	"interact",
-	"attack",
-	"custom command"
-]
+const ChatMinions: Resource = preload("res://screens/screen-plugins/chat-minions/chat_minions.tscn")
 
 onready var viewport: Viewport = $MarginContainer/ViewportContainer/Viewport
 
-var stream_rpg: Node2D
+var chat_minions: Node2D
 
 ###############################################################################
 # Builtin functions                                                           #
 ###############################################################################
 
 func _ready() -> void:
-	stream_rpg = StreamRPG.instance()
-	viewport.call_deferred("add_child", stream_rpg)
-	stream_rpg.setup({}) # TODO add some setup data?
+	chat_minions = ChatMinions.instance()
+	viewport.call_deferred("add_child", chat_minions)
+	
+	yield(chat_minions, "ready")
+	chat_minions.setup({}) # TODO add some setup data?
 
 ###############################################################################
 # Connections                                                                 #
 ###############################################################################
 
 func _on_command(user: String, reward: String, message: String) -> void:
-	# Filter out other rewards
-	var lowercase_reward: String = reward.to_lower()
-	if lowercase_reward in VALID_COMMANDS:
-		stream_rpg.command(user, lowercase_reward, message)
+	chat_minions.command(user, reward.to_lower(), message)
 
 func _on_chat(user: String, message: String) -> void:
-	pass
+	chat_minions.chat(user, message)
 
 ###############################################################################
 # Private functions                                                           #
@@ -64,8 +55,8 @@ func set_config(_config: Dictionary) -> void:
 func reset() -> void:
 	viewport.get_child(0).queue_free()
 	
-	stream_rpg = StreamRPG.instance()
-	viewport.call_deferred("add_child", stream_rpg)
+	chat_minions = ChatMinions.instance()
+	viewport.call_deferred("add_child", chat_minions)
 	
-	yield(stream_rpg, "ready")
-	stream_rpg.setup({}) # TODO add some setup data?
+	yield(chat_minions, "ready")
+	chat_minions.setup({}) # TODO add some setup data?

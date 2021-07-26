@@ -12,7 +12,7 @@ signal http_response_received
 signal authenticated
 signal pub_sub_connected
 
-signal chat_message_received(message)
+signal chat_message_received(user, message)
 
 signal user_subscribed(user, months)
 signal bits_received(user, amount, message)
@@ -163,7 +163,7 @@ func _on_chat_data_received() -> void:
 			"001":
 				emit_signal("authenticated")
 			"PRIVMSG":
-				_add_message_to_chat_history(split_message[3])
+				_add_message_to_chat_history(split_message[0], split_message[3])
 			"366", "JOIN":
 				# Do nothing
 				pass
@@ -308,7 +308,7 @@ func _send_pubsub_ping() -> void:
 	pubsub_client.get_peer(1).put_packet(JSON.print(PING_MESSAGE).to_utf8())
 	AppManager.console_log("sending pubsub ping")
 
-func _add_message_to_chat_history(message: String) -> void:
+func _add_message_to_chat_history(user: String, message: String) -> void:
 	# Not sure if this is possible but just to be safe
 	if message.length() <= 1:
 		return
@@ -320,7 +320,9 @@ func _add_message_to_chat_history(message: String) -> void:
 	else:
 		current_chat_history_index += 1
 	
-	emit_signal("chat_message_received", stripped_message)
+	var stripped_user := user.substr(1, user.find("!") - 1)
+	
+	emit_signal("chat_message_received", stripped_user, stripped_message)
 
 ###############################################################################
 # Public functions                                                            #

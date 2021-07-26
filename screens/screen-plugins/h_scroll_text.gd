@@ -32,7 +32,7 @@ func _physics_process(_delta: float) -> void:
 # Connections                                                                 #
 ###############################################################################
 
-func _on_chat_message_received(message: String) -> void:
+func _on_chat_message_received(user: String, message: String) -> void:
 	var chat_message: Node2D = CHAT_MESSAGE.instance()
 	
 	var random_amount: float = rand_range(-self.rect_size.y / 2, self.rect_size.y / 2)
@@ -40,7 +40,7 @@ func _on_chat_message_received(message: String) -> void:
 	chat_message.global_position = Vector2(spawn_location_x, self.rect_size.y / 2 + random_amount)
 	
 	add_child(chat_message)
-	chat_message.label.text = message
+	chat_message.label.text = "%s: %s" % [user, message]
 
 ###############################################################################
 # Private functions                                                           #

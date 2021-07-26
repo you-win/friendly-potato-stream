@@ -77,7 +77,7 @@ func _input(event: InputEvent) -> void:
 # Connections                                                                 #
 ###############################################################################
 
-func _on_chat_message_received(_message: String) -> void:
+func _on_chat_message_received(_user: String, _message: String) -> void:
 	_score.plus(1)
 	_score_label.text = _score.to_string()
 	# TODO Don't write data every time
