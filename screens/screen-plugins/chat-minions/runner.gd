@@ -12,6 +12,7 @@ var chat_minions: Node2D
 
 func _ready() -> void:
 	chat_minions = ChatMinions.instance()
+	chat_minions.username = main_screen.username
 	viewport.call_deferred("add_child", chat_minions)
 	
 	yield(chat_minions, "ready")

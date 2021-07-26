@@ -14,6 +14,8 @@ export var chat_minions: bool = true
 
 onready var screen_scale_layer: CanvasLayer = $ScreenScaleLayer
 
+var username: String
+
 # Can be either Twitch or Youtube for now
 var service
 
@@ -82,6 +84,8 @@ func _load_config() -> Dictionary:
 
 func _load_twitch_chat_base() -> void:
 	var config: Dictionary = _load_config()
+	
+	username = config["username"]
 	
 	service = TwitchIntegration.new()
 	
