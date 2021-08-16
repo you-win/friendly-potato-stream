@@ -109,6 +109,7 @@ text = "Smol"
 margin_left = 150.0
 margin_right = 290.0
 margin_bottom = 119.0
+focus_mode = 0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "Reset scale"
