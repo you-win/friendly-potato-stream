@@ -1,0 +1,123 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://screens/screen-plugins/chat-minions/gui.gd" type="Script" id=1]
+
+[sub_resource type="StyleBoxFlat" id=1]
+content_margin_left = 10.0
+content_margin_right = 10.0
+content_margin_top = 10.0
+content_margin_bottom = 10.0
+bg_color = Color( 0, 0, 0, 0.662745 )
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="Gui" type="CanvasLayer"]
+script = ExtResource( 1 )
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+visible = false
+anchor_left = 0.7
+anchor_right = 1.0
+anchor_bottom = 0.6
+margin_left = 10.0
+margin_top = 10.0
+margin_right = -10.0
+margin_bottom = -10.0
+mouse_filter = 2
+custom_styles/panel = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 450.0
+margin_bottom = 510.0
+
+[node name="ChatHistoryContainer" type="ScrollContainer" parent="PanelContainer/VBoxContainer"]
+margin_right = 440.0
+margin_bottom = 248.0
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ChatHistory" type="VBoxContainer" parent="PanelContainer/VBoxContainer/ChatHistoryContainer"]
+margin_right = 440.0
+margin_bottom = 248.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ControlsContainer" type="ScrollContainer" parent="PanelContainer/VBoxContainer"]
+margin_top = 252.0
+margin_right = 440.0
+margin_bottom = 500.0
+mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Controls" type="VBoxContainer" parent="PanelContainer/VBoxContainer/ControlsContainer"]
+margin_right = 440.0
+margin_bottom = 248.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/separation = 10
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/ControlsContainer/Controls"]
+margin_right = 440.0
+margin_bottom = 119.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/separation = 10
+
+[node name="Randomize" type="Button" parent="PanelContainer/VBoxContainer/ControlsContainer/Controls/HBoxContainer"]
+margin_right = 215.0
+margin_bottom = 119.0
+focus_mode = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Randomize"
+
+[node name="Duckify" type="Button" parent="PanelContainer/VBoxContainer/ControlsContainer/Controls/HBoxContainer"]
+margin_left = 225.0
+margin_right = 440.0
+margin_bottom = 119.0
+focus_mode = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Duckify"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="PanelContainer/VBoxContainer/ControlsContainer/Controls"]
+margin_top = 129.0
+margin_right = 440.0
+margin_bottom = 248.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/separation = 10
+
+[node name="MakeSmol" type="Button" parent="PanelContainer/VBoxContainer/ControlsContainer/Controls/HBoxContainer2"]
+margin_right = 140.0
+margin_bottom = 119.0
+focus_mode = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Smol"
+
+[node name="ResetScale" type="Button" parent="PanelContainer/VBoxContainer/ControlsContainer/Controls/HBoxContainer2"]
+margin_left = 150.0
+margin_right = 290.0
+margin_bottom = 119.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Reset scale"
+
+[node name="MakeChonky" type="Button" parent="PanelContainer/VBoxContainer/ControlsContainer/Controls/HBoxContainer2"]
+margin_left = 300.0
+margin_right = 440.0
+margin_bottom = 119.0
+focus_mode = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Chonky"

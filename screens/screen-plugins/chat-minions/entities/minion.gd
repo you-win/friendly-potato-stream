@@ -1,31 +1,44 @@
 extends RigidBody2D
 
-const SPEED: float = 250.0
+signal minion_selected(minion)
 
-const INITIAL_LIFETIME: float = 36000.0
+const SPEED: float = 250.0
+const THROW_SPEED: float = 5.0
+const LAST_POSITION_FRAME_SET: int = 3
+
+const INITIAL_LIFETIME: float = 3600.0
 const SAY_DURATION: float = 5.0
 
 const NEW_MOVEMENT_DELAY: float = 3.0
 
 const COLLISION_RESET_DELAY: float = 3.0
 
+const MAX_CHAT_LOGS: int = 50
+
 var lifetime: float = INITIAL_LIFETIME
 
 onready var sprite: Sprite = $Sprite
 onready var anim_player: AnimationPlayer = $AnimationPlayer
 
+# Chat
 onready var chat_bubble: Label = $ChatBubble
 onready var say_timer: Timer = $SayTimer
 var chat_bubble_initial_position: Vector2
 var chat_bubble_initial_size: Vector2
+var chat_logs := PoolStringArray()
+var chat_logs_pointer: int = -1
 
 onready var name_plate: Label = $NamePlate
-
 onready var move_timer: Timer = $MoveTimer
-
 onready var collision_layer_timer: Timer = $CollsionLayerTimer
 
 var movement_vector: Vector2 = Vector2.ZERO
+
+# Input
+var should_track_mouse := false
+var should_throw := false
+var last_global_position_counter: int = 0
+onready var last_global_position := global_position
 
 ###############################################################################
 # Builtin functions                                                           #
@@ -39,6 +52,8 @@ func _ready() -> void:
 	chat_bubble_initial_position = chat_bubble.rect_position
 	chat_bubble_initial_size = chat_bubble.rect_size
 	
+	chat_logs.resize(MAX_CHAT_LOGS)
+	
 	name_plate.text = self.name
 	var name_plate_initial_size_x: float = name_plate.rect_size.x
 	name_plate.rect_position = Vector2(
@@ -50,6 +65,8 @@ func _ready() -> void:
 	move_timer.start(NEW_MOVEMENT_DELAY)
 	
 	collision_layer_timer.connect("timeout", self, "_on_collision_layer_timer_timeout")
+
+	connect("input_event", self, "_on_input_event")
 
 func _physics_process(delta: float) -> void:
 	lifetime -= delta
@@ -70,6 +87,20 @@ func _physics_process(delta: float) -> void:
 		sprite.flip_h = false
 	else:
 		sprite.flip_h = true
+
+	if Input.is_action_just_released("left_click"):
+		should_track_mouse = false
+		mode = RigidBody2D.MODE_CHARACTER
+
+	if should_track_mouse:
+		last_global_position_counter += 1
+		if last_global_position_counter >= LAST_POSITION_FRAME_SET:
+			last_global_position = global_position
+			last_global_position_counter = 0
+		global_position = get_global_mouse_position()
+	elif should_throw:
+		should_throw = false
+		apply_central_impulse((global_position - last_global_position) * THROW_SPEED)
 
 ###############################################################################
 # Connections                                                                 #
@@ -96,6 +127,14 @@ func _on_move_timer_timeout() -> void:
 
 func _on_collision_layer_timer_timeout() -> void:
 	set_collision_layer_bit(1, false)
+
+func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
+	if event.is_action_pressed("left_click"):
+		should_track_mouse = true
+		should_throw = true
+		mode = RigidBody2D.MODE_STATIC
+		emit_signal("minion_selected", self)
+		get_tree().set_input_as_handled()
 
 ###############################################################################
 # Private functions                                                           #
@@ -134,6 +173,12 @@ func say(message: String) -> void:
 	chat_bubble.set_deferred("visible", true)
 	
 	say_timer.start(SAY_DURATION)
+	
+	# Store log
+	chat_logs_pointer += 1
+	if chat_logs_pointer > MAX_CHAT_LOGS:
+		chat_logs_pointer = 0
+	chat_logs[chat_logs_pointer] = message
 
 func start_colliding() -> void:
 	set_collision_layer_bit(1, true)

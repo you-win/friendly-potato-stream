@@ -72,6 +72,7 @@ corner_radius_bottom_left = 10
 
 [node name="Minion" type="RigidBody2D"]
 collision_mask = 2
+input_pickable = true
 mode = 2
 physics_material_override = SubResource( 6 )
 script = ExtResource( 2 )

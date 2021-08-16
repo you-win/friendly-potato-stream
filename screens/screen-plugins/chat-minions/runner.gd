@@ -57,6 +57,7 @@ func reset() -> void:
 	viewport.get_child(0).queue_free()
 	
 	chat_minions = ChatMinions.instance()
+	chat_minions.username = main_screen.username
 	viewport.call_deferred("add_child", chat_minions)
 	
 	yield(chat_minions, "ready")

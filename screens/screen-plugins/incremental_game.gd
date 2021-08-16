@@ -54,25 +54,6 @@ func _ready() -> void:
 	
 	_score_label.rect_global_position = _spawn_location - (_container_size / 2)
 
-func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("left_click"):
-		_allow_move = true
-	elif event.is_action_released("left_click"):
-		_allow_move = false
-	elif event.is_action_pressed("scroll_up"):
-		if _current_scale > MIN_SCALE:
-			_graphic.scale -= Vector2(0.1, 0.1)
-			_score_font.size -= 1
-			_current_scale -= 1
-	elif event.is_action_pressed("scroll_down"):
-		if _current_scale < MAX_SCALE:
-			_graphic.scale += Vector2(0.1, 0.1)
-			_score_font.size += 1
-			_current_scale += 1
-	elif _allow_move:
-		if event is InputEventMouseMotion:
-			_graphic.translate(event.relative)
-
 ###############################################################################
 # Connections                                                                 #
 ###############################################################################
