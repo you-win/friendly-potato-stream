@@ -19,3 +19,6 @@ See the Twitch api docs for more information on some of these keys.
 }
 ```
 
+## Discussion
+A Discord server [is available here](https://discord.gg/6mcdWWBkrr) if you need help, like to contribute, or just want to chat.
+
