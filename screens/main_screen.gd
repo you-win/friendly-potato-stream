@@ -5,12 +5,34 @@ export(StreamingServiceType) var streaming_service = StreamingServiceType.TWITCH
 
 const CONFIG_FILE_NAME: String = "potato-config.json"
 
+const PLUGIN_NAMES: Dictionary = {
+	"simple_chat": "simple_chat",
+	"h_scroll_text": "h_scroll_text",
+	"incremental_game": "incremental_game",
+	"chat_minions": "chat_minions"
+}
+
+const PLUGINS: Dictionary = {
+	PLUGIN_NAMES["simple_chat"]: "res://screens/screen-plugins/simple_chat.tscn",
+	PLUGIN_NAMES["h_scroll_text"]: "res://screens/screen-plugins/h_scroll_text.tscn",
+	PLUGIN_NAMES["incremental_game"]: "res://screens/screen-plugins/incremental_game.tscn",
+	PLUGIN_NAMES["chat_minions"]: "res://screens/screen-plugins/chat-minions/runner.tscn"
+}
+
+export var should_use_chromakey := true
+
 # Options for which screens to load
-export var simple_chat: bool = false
-export var h_scroll_text: bool = true
-export var incremental_game: bool = true
-export var stream_rpg: bool = false
-export var chat_minions: bool = true
+export var enabled_plugins: Dictionary = {
+	PLUGIN_NAMES["simple_chat"]: false,
+	PLUGIN_NAMES["h_scroll_text"]: true,
+	PLUGIN_NAMES["incremental_game"]: true,
+	PLUGIN_NAMES["chat_minions"]: true
+}
+
+# Used for lazy reloading plugins 
+var initial_plugin_values: Dictionary = {}
+
+var loaded_plugins: Dictionary = {}
 
 onready var screen_scale_layer: CanvasLayer = $ScreenScaleLayer
 
@@ -24,11 +46,12 @@ var service
 ###############################################################################
 
 func _ready() -> void:
-	get_viewport().transparent_bg = true
-	# TODO currently isn't possible to do an overlay on windows
-	OS.window_per_pixel_transparency_enabled = true
-	# OS.window_size = OS.max_window_size
-	# OS.set_window_mouse_passthrough([Vector2(-1.0, -1.0), Vector2(-1.0, -2.0), Vector2(-2.0, -1.0)])
+	if not should_use_chromakey:
+		get_viewport().transparent_bg = true
+		# TODO currently isn't possible to do an overlay on windows
+		OS.window_per_pixel_transparency_enabled = true
+	else:
+		find_node("ChromakeyColorRect").visible = true
 	
 	match streaming_service:
 		StreamingServiceType.TWITCH:
@@ -36,23 +59,25 @@ func _ready() -> void:
 		StreamingServiceType.YOUTUBE:
 			_load_youtube_chat_base()
 	
-	# TODO refactor this into something more modular
 	# Load plugins
-	if simple_chat:
-		var instance = load("res://screens/screen-plugins/simple_chat.tscn").instance()
+	if enabled_plugins[PLUGIN_NAMES.simple_chat]:
+		var instance = load(PLUGINS[PLUGIN_NAMES.simple_chat]).instance()
+		loaded_plugins[PLUGIN_NAMES.simple_chat] = instance
 		screen_scale_layer.add_child(instance)
-	if h_scroll_text:
-		var instance = load("res://screens/screen-plugins/h_scroll_text.tscn").instance()
+	if enabled_plugins[PLUGIN_NAMES.h_scroll_text]:
+		var instance = load(PLUGINS[PLUGIN_NAMES.h_scroll_text]).instance()
+		loaded_plugins[PLUGIN_NAMES.h_scroll_text] = instance
 		screen_scale_layer.add_child(instance)
-	if incremental_game:
-		var instance = load("res://screens/screen-plugins/incremental_game.tscn").instance()
+	if enabled_plugins[PLUGIN_NAMES.incremental_game]:
+		var instance = load(PLUGINS[PLUGIN_NAMES.incremental_game]).instance()
+		loaded_plugins[PLUGIN_NAMES.incremental_game] = instance
 		screen_scale_layer.add_child(instance)
-	if stream_rpg:
-		var instance = load("res://screens/screen-plugins/stream-rpg/runner.tscn").instance()
+	if enabled_plugins[PLUGIN_NAMES.chat_minions]:
+		var instance = load(PLUGINS[PLUGIN_NAMES.chat_minions]).instance()
+		loaded_plugins[PLUGIN_NAMES.chat_minions] = instance
 		screen_scale_layer.add_child(instance)
-	if chat_minions:
-		var instance = load("res://screens/screen-plugins/chat-minions/runner.tscn").instance()
-		screen_scale_layer.add_child(instance)
+
+	initial_plugin_values = enabled_plugins.duplicate(true)
 	
 	for c in screen_scale_layer.get_children():
 		# c is of type ScreenPlugin
@@ -116,4 +141,22 @@ func _load_youtube_chat_base() -> void:
 # Public functions                                                            #
 ###############################################################################
 
+func reset_plugins() -> void:
+	for c in screen_scale_layer.get_children():
+		# All children are of type ScreenPlugin.gd
+		c.reset()
+		AppManager.console_log("%s plugin reset." % c.name)
 
+func reload_plugins() -> void:
+	for key in enabled_plugins.keys():
+		if (enabled_plugins[key] and not initial_plugin_values[key]):
+			var instance = load(PLUGINS[key]).instance()
+			loaded_plugins[key] = instance
+			screen_scale_layer.add_child(instance)
+		elif (not enabled_plugins[key] and initial_plugin_values[key]):
+			yield(get_tree(), "idle_frame")
+			if loaded_plugins.has(PLUGIN_NAMES[key]):
+				loaded_plugins[PLUGIN_NAMES[key]].free()
+				loaded_plugins.erase(PLUGIN_NAMES[key])
+	
+	initial_plugin_values = enabled_plugins.duplicate(true)

@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://screens/control_layer.gd" type="Script" id=1]
+[ext_resource path="res://assets/themes/panel_container.stylebox" type="StyleBox" id=2]
+[ext_resource path="res://assets/themes/default_theme.theme" type="Theme" id=3]
 
 [node name="ControlLayer" type="CanvasLayer"]
 layer = 100
@@ -10,6 +12,7 @@ script = ExtResource( 1 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
+theme = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -27,18 +30,18 @@ __meta__ = {
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Control/ButtonsContainer"]
 margin_right = 1675.0
-margin_bottom = 20.0
+margin_bottom = 24.0
 mouse_filter = 2
 
 [node name="SettingsButton" type="Button" parent="Control/ButtonsContainer/HBoxContainer"]
-margin_right = 63.0
-margin_bottom = 20.0
+margin_right = 61.0
+margin_bottom = 24.0
 text = "Settings"
 
 [node name="ResetButton" type="Button" parent="Control/ButtonsContainer/HBoxContainer"]
-margin_left = 67.0
-margin_right = 115.0
-margin_bottom = 20.0
+margin_left = 65.0
+margin_right = 111.0
+margin_bottom = 24.0
 text = "Reset"
 
 [node name="ConsoleContainer" type="MarginContainer" parent="Control"]
@@ -58,7 +61,7 @@ __meta__ = {
 margin_right = 460.0
 margin_bottom = 160.0
 mouse_filter = 2
-color = Color( 0.0862745, 0.0862745, 0.0862745, 1 )
+color = Color( 0.0862745, 0.0862745, 0.0862745, 0.662745 )
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Control/ConsoleContainer/ColorRect"]
 anchor_right = 1.0
@@ -77,3 +80,57 @@ mouse_filter = 2
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="SettingsContainer" type="PanelContainer" parent="Control"]
+visible = false
+anchor_left = 0.1
+anchor_top = 0.1
+anchor_right = 0.9
+anchor_bottom = 0.9
+margin_right = 14.0
+margin_bottom = 14.0
+custom_styles/panel = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PluginsContainer" type="ScrollContainer" parent="Control/SettingsContainer"]
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 1284.0
+margin_bottom = 724.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/SettingsContainer/PluginsContainer"]
+margin_right = 1274.0
+margin_bottom = 714.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Control/SettingsContainer/PluginsContainer/VBoxContainer"]
+margin_right = 1274.0
+margin_bottom = 14.0
+text = "Plugins"
+
+[node name="SimpleChat" type="CheckButton" parent="Control/SettingsContainer/PluginsContainer/VBoxContainer"]
+margin_top = 24.0
+margin_right = 1274.0
+margin_bottom = 66.0
+text = "Simple Chat"
+
+[node name="HScrollText" type="CheckButton" parent="Control/SettingsContainer/PluginsContainer/VBoxContainer"]
+margin_top = 76.0
+margin_right = 1274.0
+margin_bottom = 118.0
+text = "H Scroll Text"
+
+[node name="IncrementalGame" type="CheckButton" parent="Control/SettingsContainer/PluginsContainer/VBoxContainer"]
+margin_top = 128.0
+margin_right = 1274.0
+margin_bottom = 170.0
+text = "Incremental Game"
+
+[node name="ChatMinions" type="CheckButton" parent="Control/SettingsContainer/PluginsContainer/VBoxContainer"]
+margin_top = 180.0
+margin_right = 1274.0
+margin_bottom = 222.0
+text = "Chat Minions"

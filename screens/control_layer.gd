@@ -12,6 +12,12 @@ onready var settings_button: Button = $Control/ButtonsContainer/HBoxContainer/Se
 onready var reset_button: Button = $Control/ButtonsContainer/HBoxContainer/ResetButton
 onready var console: VBoxContainer = $Control/ConsoleContainer/ColorRect/ScrollContainer/VBoxContainer
 
+onready var settings_container: PanelContainer = $Control/SettingsContainer
+onready var simple_chat_toggle: CheckButton = $Control/SettingsContainer/PluginsContainer/VBoxContainer/SimpleChat
+onready var h_scroll_text_toggle: CheckButton = $Control/SettingsContainer/PluginsContainer/VBoxContainer/HScrollText
+onready var incremental_game_toggle: CheckButton = $Control/SettingsContainer/PluginsContainer/VBoxContainer/IncrementalGame
+onready var chat_minions_toggle: CheckButton = $Control/SettingsContainer/PluginsContainer/VBoxContainer/ChatMinions
+
 onready var main_screen = get_parent()
 onready var control: Control = $Control
 
@@ -20,12 +26,18 @@ onready var control: Control = $Control
 ###############################################################################
 
 func _ready() -> void:
-	#warning-ignore:return_value_discarded
 	settings_button.connect("pressed", self, "_on_settings_button_pressed")
-	#warning-ignore:return_value_discarded
 	reset_button.connect("pressed", self, "_on_reset_button_pressed")
-	#warning-ignore:return_value_discarded
 	AppManager.connect("console_log", self, "_on_console_log")
+	
+	simple_chat_toggle.pressed = main_screen.enabled_plugins["simple_chat"]
+	simple_chat_toggle.connect("toggled", self, "_on_simple_chat_toggled")
+	h_scroll_text_toggle.pressed = main_screen.enabled_plugins["h_scroll_text"]
+	h_scroll_text_toggle.connect("toggled", self, "_on_h_scroll_text_toggled")
+	incremental_game_toggle.pressed = main_screen.enabled_plugins["incremental_game"]
+	incremental_game_toggle.connect("toggled", self, "_on_incremental_game_toggled")
+	chat_minions_toggle.pressed = main_screen.enabled_plugins["chat_minions"]
+	chat_minions_toggle.connect("toggled", self, "_on_chat_minions_toggled")
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("toggle_ui"):
@@ -36,13 +48,10 @@ func _input(event: InputEvent) -> void:
 ###############################################################################
 
 func _on_settings_button_pressed() -> void:
-	pass
+	settings_container.visible = not settings_container.visible
 
 func _on_reset_button_pressed() -> void:
-	for c in main_screen.screen_scale_layer.get_children():
-		# All children are of type ScreenPlugin.gd
-		c.reset()
-		AppManager.console_log("%s plugin reset." % c.name)
+	main_screen.reset_plugins()
 
 func _on_console_log(message: String) -> void:
 	var label: Label = Label.new()
@@ -52,6 +61,22 @@ func _on_console_log(message: String) -> void:
 	
 	if console.get_child_count() > MAX_CONSOLE_LOGS:
 		console.get_child(MAX_CONSOLE_LOGS).free()
+
+func _on_simple_chat_toggled(button_state: bool) -> void:
+	main_screen.enabled_plugins["simple_chat"] = button_state
+	main_screen.reload_plugins()
+
+func _on_h_scroll_text_toggled(button_state: bool) -> void:
+	main_screen.enabled_plugins["h_scroll_text"] = button_state
+	main_screen.reload_plugins()
+
+func _on_incremental_game_toggled(button_state: bool) -> void:
+	main_screen.enabled_plugins["incremental_game"] = button_state
+	main_screen.reload_plugins()
+
+func _on_chat_minions_toggled(button_state: bool) -> void:
+	main_screen.enabled_plugins["chat_minions"] = button_state
+	main_screen.reload_plugins()
 
 ###############################################################################
 # Private functions                                                           #

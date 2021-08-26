@@ -11,7 +11,7 @@ script = ExtResource( 2 )
 [node name="ChromaKeyLayer" type="CanvasLayer" parent="."]
 layer = 0
 
-[node name="ColorRect" type="ColorRect" parent="ChromaKeyLayer"]
+[node name="ChromakeyColorRect" type="ColorRect" parent="ChromaKeyLayer"]
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
