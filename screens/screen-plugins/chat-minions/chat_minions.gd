@@ -144,6 +144,7 @@ func command(user: String, lowercase_reward: String, message: String) -> void:
 			gui.on_randomize(minion)
 		"custom command":
 			var minion = yield(_get_existing_or_new_minion(user), "completed")
+			message = message.to_lower()
 			if message.find("chonk") > -1:
 				gui.make_chonky(minion)
 			if message.find("smol") > -1:
