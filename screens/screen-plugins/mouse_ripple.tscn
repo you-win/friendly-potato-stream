@@ -1,0 +1,74 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://screens/screen-plugins/mouse_ripple.gd" type="Script" id=1]
+[ext_resource path="res://assets/icon.png" type="Texture" id=2]
+
+[sub_resource type="Shader" id=5]
+code = "/*
+	六角形モザイク by あるる（きのもと 結衣）
+	Hex Noise by Yui Kinomoto @arlez80
+
+	MIT License
+*/
+shader_type canvas_item;
+
+uniform vec2 size = vec2( 64.0, 48.0 );
+
+void fragment( )
+{
+	vec2 norm_size = size * SCREEN_PIXEL_SIZE;
+	bool half = mod( SCREEN_UV.y / 2.0, norm_size.y ) / norm_size.y < 0.5;
+	vec2 uv = SCREEN_UV + vec2( norm_size.x * 0.5 * float( half ), 0.0 );
+	vec2 center_uv = floor( uv / norm_size ) * norm_size;
+	vec2 norm_uv = mod( uv, norm_size ) / norm_size;
+	center_uv += mix(
+		vec2( 0.0, 0.0 )
+	,	mix(
+			mix(
+				vec2( norm_size.x, -norm_size.y )
+			,	vec2( 0.0, -norm_size.y )
+			,	float( norm_uv.x < 0.5 )
+			)
+		,	mix(
+				vec2( 0.0, -norm_size.y )
+			,	vec2( -norm_size.x, -norm_size.y )
+			,	float( norm_uv.x < 0.5 )
+			)
+		,	float( half )
+		)
+	,	float( norm_uv.y < 0.3333333 ) * float( norm_uv.y / 0.3333333 < ( abs( norm_uv.x - 0.5 ) * 2.0 ) )
+	);
+
+	vec4 tex = texture(SCREEN_TEXTURE, SCREEN_UV);
+//	COLOR = textureLod( SCREEN_TEXTURE, center_uv, 0.0 );
+	COLOR = texture(SCREEN_TEXTURE, center_uv);
+}
+"
+
+[sub_resource type="ShaderMaterial" id=6]
+shader = SubResource( 5 )
+shader_param/size = Vector2( 16, 12 )
+
+[node name="MouseRipple" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Sprite" type="Sprite" parent="CanvasLayer"]
+texture = ExtResource( 2 )
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+material = SubResource( 6 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color( 0, 0, 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

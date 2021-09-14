@@ -9,24 +9,27 @@ const PLUGIN_NAMES: Dictionary = {
 	"simple_chat": "simple_chat",
 	"h_scroll_text": "h_scroll_text",
 	"incremental_game": "incremental_game",
-	"chat_minions": "chat_minions"
+	"chat_minions": "chat_minions",
+	"mouse_ripple": "mouse_ripple"
 }
 
 const PLUGINS: Dictionary = {
-	PLUGIN_NAMES["simple_chat"]: "res://screens/screen-plugins/simple_chat.tscn",
-	PLUGIN_NAMES["h_scroll_text"]: "res://screens/screen-plugins/h_scroll_text.tscn",
-	PLUGIN_NAMES["incremental_game"]: "res://screens/screen-plugins/incremental_game.tscn",
-	PLUGIN_NAMES["chat_minions"]: "res://screens/screen-plugins/chat-minions/runner.tscn"
+	PLUGIN_NAMES.simple_chat: "res://screens/screen-plugins/simple_chat.tscn",
+	PLUGIN_NAMES.h_scroll_text: "res://screens/screen-plugins/h_scroll_text.tscn",
+	PLUGIN_NAMES.incremental_game: "res://screens/screen-plugins/incremental_game.tscn",
+	PLUGIN_NAMES.chat_minions: "res://screens/screen-plugins/chat-minions/runner.tscn",
+	PLUGIN_NAMES.mouse_ripple: "res://screens/screen-plugins/mouse_ripple.tscn"
 }
 
 export var should_use_chromakey := true
 
 # Options for which screens to load
 export var enabled_plugins: Dictionary = {
-	PLUGIN_NAMES["simple_chat"]: false,
-	PLUGIN_NAMES["h_scroll_text"]: true,
-	PLUGIN_NAMES["incremental_game"]: true,
-	PLUGIN_NAMES["chat_minions"]: true
+	PLUGIN_NAMES.simple_chat: false,
+	PLUGIN_NAMES.h_scroll_text: true,
+	PLUGIN_NAMES.incremental_game: true,
+	PLUGIN_NAMES.chat_minions: true,
+	PLUGIN_NAMES.mouse_ripple: true
 }
 
 # Used for lazy reloading plugins 
@@ -75,6 +78,10 @@ func _ready() -> void:
 	if enabled_plugins[PLUGIN_NAMES.chat_minions]:
 		var instance = load(PLUGINS[PLUGIN_NAMES.chat_minions]).instance()
 		loaded_plugins[PLUGIN_NAMES.chat_minions] = instance
+		screen_scale_layer.add_child(instance)
+	if enabled_plugins[PLUGIN_NAMES.mouse_ripple]:
+		var instance = load(PLUGINS[PLUGIN_NAMES.mouse_ripple]).instance()
+		loaded_plugins[PLUGIN_NAMES.mouse_ripple] = instance
 		screen_scale_layer.add_child(instance)
 
 	initial_plugin_values = enabled_plugins.duplicate(true)
