@@ -14,11 +14,11 @@ const PLUGIN_NAMES: Dictionary = {
 }
 
 const PLUGINS: Dictionary = {
-	PLUGIN_NAMES.simple_chat: "res://screens/screen-plugins/simple_chat.tscn",
-	PLUGIN_NAMES.h_scroll_text: "res://screens/screen-plugins/h_scroll_text.tscn",
-	PLUGIN_NAMES.incremental_game: "res://screens/screen-plugins/incremental_game.tscn",
-	PLUGIN_NAMES.chat_minions: "res://screens/screen-plugins/chat-minions/runner.tscn",
-	PLUGIN_NAMES.mouse_ripple: "res://screens/screen-plugins/mouse_ripple.tscn"
+	PLUGIN_NAMES.simple_chat: "res://plugins/simple_chat.tscn",
+	PLUGIN_NAMES.h_scroll_text: "res://plugins/h_scroll_text.tscn",
+	PLUGIN_NAMES.incremental_game: "res://plugins/incremental_game.tscn",
+	PLUGIN_NAMES.chat_minions: "res://plugins/chat-minions/runner.tscn",
+	PLUGIN_NAMES.mouse_ripple: "res://plugins/mouse_ripple.tscn"
 }
 
 export var should_use_chromakey := true
@@ -89,6 +89,10 @@ func _ready() -> void:
 	for c in screen_scale_layer.get_children():
 		# c is of type ScreenPlugin
 		c.init_connections()
+	
+	# TODO debug
+	var obs_websocket = load("res://plugins/obs_websocket.tscn").instance()
+	screen_scale_layer.add_child(obs_websocket)
 
 ###############################################################################
 # Connections                                                                 #

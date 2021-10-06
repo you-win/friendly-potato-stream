@@ -22,7 +22,7 @@ _global_script_classes=[ {
 "base": "Control",
 "class": "ScreenPlugin",
 "language": "GDScript",
-"path": "res://screens/screen-plugins/screen_plugin.gd"
+"path": "res://plugins/screen_plugin.gd"
 }, {
 "base": "Node",
 "class": "TwitchIntegration",
