@@ -8,6 +8,8 @@ const POSSIBLE_SPRITES: Array = []
 
 const RUBBER_DUCK_FILE_NAME: String = "RubberDuck.png"
 
+const GRAVITATE_SPEED: float = 25.0
+
 var asset_dir: String
 var rubber_duck_path: String
 
@@ -16,6 +18,10 @@ var username: String
 onready var spawn_path_follow: PathFollow2D = $SpawnPath/SpawnPathFollow
 onready var active_minions: Node = $ActiveMinions
 onready var gui: CanvasLayer = $Gui
+
+const ASSET_RESCAN_MAX: float = 5.0
+var asset_rescan_counter: float = 0.0
+var should_rescan_assets := false
 
 ###############################################################################
 # Builtin functions                                                           #
@@ -48,6 +54,18 @@ func _ready() -> void:
 	yield(new_minion, "ready")
 
 	new_minion.sprite.texture = create_random_image_texture()
+
+func _physics_process(delta: float) -> void:
+	if not should_rescan_assets:
+		asset_rescan_counter += delta
+		if asset_rescan_counter >= ASSET_RESCAN_MAX:
+			asset_rescan_counter = 0.0
+			should_rescan_assets = true
+		
+	if Input.is_action_pressed("right_click"):
+		var mouse_pos: Vector2 = get_global_mouse_position()
+		for minion in active_minions.get_children():
+			minion.apply_central_impulse((mouse_pos - minion.global_position).normalized() * GRAVITATE_SPEED)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if (gui.is_gui_visible and event.is_action_pressed("left_click")):
@@ -119,11 +137,29 @@ func _make_minions_jump() -> void:
 		)
 		child.start_colliding()
 
+func _rescan_asset_folder() -> void:
+	POSSIBLE_SPRITES.clear()
+	
+	var dir := Directory.new()
+	if dir.open(asset_dir) == OK:
+		dir.list_dir_begin(true, true)
+		var file_name = dir.get_next()
+		while file_name != "":
+			if not dir.current_is_dir():
+				if (file_name.get_extension() == PNG_EXTENSION and file_name != DEFAULT_MINION_NAME):
+					POSSIBLE_SPRITES.append("%s%s" % [asset_dir, file_name])
+
+				if file_name == RUBBER_DUCK_FILE_NAME:
+					rubber_duck_path = "%s%s" % [asset_dir, file_name]
+			file_name = dir.get_next()
+
 ###############################################################################
 # Public functions                                                            #
 ###############################################################################
 
 func create_random_image_texture() -> ImageTexture:
+	if should_rescan_assets:
+		_rescan_asset_folder()
 	return _create_image_texture(
 			POSSIBLE_SPRITES[AppManager.rng.randi_range(0, POSSIBLE_SPRITES.size() - 1)])
 
