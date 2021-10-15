@@ -89,10 +89,6 @@ func _ready() -> void:
 	for c in screen_scale_layer.get_children():
 		# c is of type ScreenPlugin
 		c.init_connections()
-	
-	# TODO debug
-	var obs_websocket = load("res://plugins/obs_websocket.tscn").instance()
-	screen_scale_layer.add_child(obs_websocket)
 
 ###############################################################################
 # Connections                                                                 #
