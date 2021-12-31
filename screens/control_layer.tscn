@@ -134,3 +134,9 @@ margin_top = 180.0
 margin_right = 1274.0
 margin_bottom = 222.0
 text = "Chat Minions"
+
+[node name="MouseRipple" type="CheckButton" parent="Control/SettingsContainer/PluginsContainer/VBoxContainer"]
+margin_top = 180.0
+margin_right = 1274.0
+margin_bottom = 222.0
+text = "Mouse Ripple"

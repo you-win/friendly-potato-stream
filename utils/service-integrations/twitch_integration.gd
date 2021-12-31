@@ -24,6 +24,11 @@ const TWITCH_OAUTH_URL_FORMAT: String = """https://id.twitch.tv/oauth2/token
 	&client_secret=%s
 	&grant_type=client_credentials"""
 const TWITCH_GET_USER_URL_FORMAT: String = "https://api.twitch.tv/helix/users?login=%s"
+const TWITCH_REFRESH_TOKEN_URL_FORMAT: String = """https://id.twitch.tv/oauth2/token
+	?grant_type=refresh_token
+	&refresh_token=%s
+	&client_id=%s
+	&client_secret=%s"""
 
 # Chat
 const TWITCH_CHAT_URL: String = "wss://irc-ws.chat.twitch.tv:443"
@@ -331,23 +336,34 @@ func _add_message_to_chat_history(user: String, message: String) -> void:
 ###
 # General
 ###
-func get_oauth_token(client_id: String, client_secret: String) -> void:
-	var post_request: String = TWITCH_OAUTH_URL_FORMAT.strip_escapes() % [client_id, client_secret]
-	
+
+func refresh_token(client_id: String, client_secret: String, refresh: String) -> void:
+	var post_request: String = TWITCH_REFRESH_TOKEN_URL_FORMAT.strip_escapes() % [
+		refresh,
+		client_id,
+		client_secret
+	]
+	print(post_request)
 	http.request(post_request, PoolStringArray(), true, HTTPClient.METHOD_POST)
 
-func get_join_channel_id(client_id: String, channel: String, token: String) -> void:
-	var get_request: String = TWITCH_GET_USER_URL_FORMAT % channel
-	var headers: PoolStringArray = PoolStringArray([
-		"Authorization: Bearer %s" % token,
-		"Client-Id: %s" % client_id
-	])
-
-	http.request(get_request, headers, true, HTTPClient.METHOD_GET)
+#func get_oauth_token(client_id: String, client_secret: String) -> void:
+#	var post_request: String = TWITCH_OAUTH_URL_FORMAT.strip_escapes() % [client_id, client_secret]
+#
+#	http.request(post_request, PoolStringArray(), true, HTTPClient.METHOD_POST)
+#
+#func get_join_channel_id(client_id: String, channel: String, token: String) -> void:
+#	var get_request: String = TWITCH_GET_USER_URL_FORMAT % channel
+#	var headers: PoolStringArray = PoolStringArray([
+#		"Authorization: Bearer %s" % token,
+#		"Client-Id: %s" % client_id
+#	])
+#
+#	http.request(get_request, headers, true, HTTPClient.METHOD_GET)
 
 ###
 # Chat
 ###
+
 func authenticate(username: String, token: String) -> void:
 	"""
 	Sends auth creds to websocket.
@@ -367,6 +383,7 @@ func join_channel(username: String) -> void:
 ###
 # PubSub
 ###
+
 func subscribe(channel_id: String, token: String, p_nonce: String) -> void:
 	"""
 	DOES NOT EMIT PUB_SUB_CONNECTED SIGNAL. The 'pub_sub_connected' signal is emitted

@@ -114,6 +114,19 @@ func _load_config() -> Dictionary:
 	# TODO maybe add some error handling?
 	return parse_json(text)
 
+func _save_config(config: Dictionary) -> void:
+	var file := File.new()
+	if OS.is_debug_build():
+		#warning-ignore:return_value_discarded
+		file.open("res://export/potato-config.json", File.WRITE)
+	else:
+		var executable_directory: String = OS.get_executable_path().get_base_dir()
+		# TODO generate sensible error message if config not found
+		file.open(executable_directory + "/" + CONFIG_FILE_NAME, File.WRITE)
+	
+	file.store_string(to_json(config))
+	file.close()
+
 func _load_twitch_chat_base() -> void:
 	var config: Dictionary = _load_config()
 	
@@ -126,6 +139,16 @@ func _load_twitch_chat_base() -> void:
 	call_deferred("add_child", service)
 	
 	yield(service, "ready")
+	
+	# Refresh token
+	service.refresh_token(config["client_id"], config["client_secret"], config["refresh"])
+	
+	yield(service, "http_response_received")
+	
+	var new_token = service.last_response["access_token"]
+	config["token"] = new_token
+	
+	_save_config(config)
 	
 	# Chat
 	yield(service.chat_client, "connection_established")

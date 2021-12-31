@@ -17,6 +17,7 @@ onready var simple_chat_toggle: CheckButton = $Control/SettingsContainer/Plugins
 onready var h_scroll_text_toggle: CheckButton = $Control/SettingsContainer/PluginsContainer/VBoxContainer/HScrollText
 onready var incremental_game_toggle: CheckButton = $Control/SettingsContainer/PluginsContainer/VBoxContainer/IncrementalGame
 onready var chat_minions_toggle: CheckButton = $Control/SettingsContainer/PluginsContainer/VBoxContainer/ChatMinions
+onready var mouse_ripple_toggle: CheckButton = $Control/SettingsContainer/PluginsContainer/VBoxContainer/MouseRipple
 
 onready var main_screen = get_parent()
 onready var control: Control = $Control
@@ -38,6 +39,8 @@ func _ready() -> void:
 	incremental_game_toggle.connect("toggled", self, "_on_incremental_game_toggled")
 	chat_minions_toggle.pressed = main_screen.enabled_plugins["chat_minions"]
 	chat_minions_toggle.connect("toggled", self, "_on_chat_minions_toggled")
+	mouse_ripple_toggle.pressed = main_screen.enabled_plugins["mouse_ripple"]
+	mouse_ripple_toggle.connect("toggled", self, "_on_mouse_ripple_toggled")
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("toggle_ui"):
@@ -76,6 +79,10 @@ func _on_incremental_game_toggled(button_state: bool) -> void:
 
 func _on_chat_minions_toggled(button_state: bool) -> void:
 	main_screen.enabled_plugins["chat_minions"] = button_state
+	main_screen.reload_plugins()
+
+func _on_mouse_ripple_toggled(button_state: bool) -> void:
+	main_screen.enabled_plugins["mouse_ripple"] = button_state
 	main_screen.reload_plugins()
 
 ###############################################################################
